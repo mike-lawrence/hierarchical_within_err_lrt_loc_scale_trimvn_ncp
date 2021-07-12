@@ -1,7 +1,6 @@
 //aria: compile=1
 //aria: compile_debug=1
 //aria: run_debug=0 #because the auto-generated debug data doesn't work
-//aria: syntax_ignore = c('has no priors.')
 functions{
 	// flatten_lower_tri: function that returns the lower-tri of a matrix, flattened to a vector
 	vector flatten_lower_tri(matrix mat) {
