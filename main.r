@@ -19,21 +19,24 @@ for(file in fs::dir_ls('r')){
 #install any required packages not already present
 install_if_missing(required_packages)
 
+#load packages
 library(tidyverse)
-library(magrittr)
+library(aria)
 
 #import & toss too-fast
+#  Demo note: just data I had on hand for this
 (
 	readRDS('rds/00_imported_and_cleaned.rds')
-	%>% filter(!str_detect(experiment,'ANTI_Poder_Legitimidad'))
-	%>% filter(flanker!='neutral')
+	%>% filter(!str_detect(experiment,'ANTI_Poder_Legitimidad')) #no error data in this experiment
+	%>% filter(flanker!='neutral') # for demo
 	%>% filter(rt>150)
 	%>% mutate(lrt=log(rt))
 	%>% rename(id=participant)
-	%>% filter(id %in% unique(id)[1:30])
+	%>% filter(id %in% unique(id)[1:30]) #just a few Ss for this demo
 ) ->
 	a
 
+# quick viz:
 (
 	a
 	# %>% filter(lrt<6)
@@ -70,7 +73,7 @@ library(magrittr)
 	%>% mutate(
 		contrasts = get_contrast_matrix_rows_as_list(
 			data = .
-			, formula = ~ flanker
+			, formula = ~ flanker # Demo note: we could do `~alertness*orienting*flanker`, but that'll take a long time to sample
 			, contrast_kind = halfhelmert_contrasts
 		)
 	)
@@ -164,10 +167,19 @@ data_for_stan = lst( #lst permits later entries to refer to earlier entries
 #quick view
 glimpse(data_for_stan)
 
+stan_code_path = 'stan/err_lrt_loc_scale_trimvn_ncp.stan'
+
+#take a look at the model
+file.edit(stan_code_path)
+#when you click save, aria will syntax check and compile
+
+#alternatively:
+aria:::check_syntax_and_maybe_compile(stan_code_path)
+
 # compose
 aria::compose(
 	data = data_for_stan
-	, code_path = 'stan/err_lrt_loc_scale_trimvn_ncp.stan'
+	, code_path = stan_code_path
 	, out_path = 'nc/samples.nc'
 )
 
