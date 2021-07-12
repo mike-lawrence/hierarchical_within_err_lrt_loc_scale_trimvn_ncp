@@ -1,3 +1,6 @@
+aria/
+nc/*.nc
+
 # History files
 .Rhistory
 .Rapp.history
