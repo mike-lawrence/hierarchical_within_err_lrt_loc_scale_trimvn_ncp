@@ -1,5 +1,5 @@
 aria/
-nc/*.nc
+*.nc
 
 # History files
 .Rhistory
